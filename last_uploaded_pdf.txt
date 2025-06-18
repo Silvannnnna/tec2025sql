@@ -1,0 +1,149 @@
+Martin Noriega Moreno 
+martin.noriega@tec.mx
+Álgebra  Relacional
+4 Marzo 2025
+
+
+Agenda del día
+• Álgebra relacional
+• Tarea 2: Álgebra Relacional
+• Avances en modelo E-R del Reto
+
+Team Sync  
+(Daily Stand Up)
+¿Voy  a usar “Álgebra  Relacional” en la Industria?
+No.
+• El álgebra relacional se basa en la 
+teoría de conjuntos para especiﬁcar 
+consultas en una base de datos 
+relacional.
+• Son consultas procedimentales: Se 
+toma como entrada a una o dos 
+relaciones y se produce como 
+resultado una nueva relación.
+
+• Operaciones no binarias:
+• Selección
+• Proyección
+• Operaciones binarias:
+• Unión
+• Intersección
+• Diferencia
+• Producto Cartesiano
+
+Operación Redenominar
+• Se denota por el símbolo := 
+• Es utilizado para asignar un nombre a una 
+relación que resulta de una operación de 
+algebra relacional.
+• Ejemplo: R := E
+
+Operaciones Conjuntistas
+Unión
+• A partir de dos relaciones, se obtiene una nueva 
+relación formada por las tuplas que existen en una 
+de las 2 relaciones de partida.
+• Sólo se puede asignar la unión en tablas que:
+• Tengan el mismo grado (cantidad de columnas)
+• Cada uno de los atributos en las tablas tienen 
+una relación y dominio similar entre ellos.
+• Se representa con el símbolo ∪
+
+R := EMPLEADOS_ADM ∪ EMPLEADOS_PROD
+
+Intersección
+• A partir de dos relaciones, se genera una 
+nueva relación formada por las tuplas que 
+pertenecen a las 2 relaciones de inicio.
+• Es una operación binaria, se representa con el 
+símbolo ∩
+• Solo puede aplicarse en relaciones que sean 
+compatibles (criterios similares a la unión).
+
+R : = EMPLEADOS_ADM ∩ EMPLEADOS_PROD
+
+Diferencia
+• Iniciando con dos relaciones, se genera una 
+relación en la que están las tuplas de la 
+primera relación pero no están en la 
+segunda.
+• Se utiliza el símbolo –
+• Solo tiene sentido si se aplica en relaciones 
+con tuplas similares, ya que las tablas 
+deben de ser compatibles.
+
+R := EMPLEADOS_ADM – EMPLEADOS_PROD
+
+Producto cartesiano
+• A partir de 2 relaciones, se genera una nueva relación 
+compuesta por todas las posibles ﬁlas de la primera 
+tabla concatenadas con las ﬁlas de la segunda.
+• Es una operación binaria, se deben de utilizar dos 
+tablas que en su esquema no compartan algún 
+atributo en común.
+• El símbolo utilizado para el producto cartesiano es X
+• Raramente se utiliza el producto cartesiano, ya que el 
+resultado no es útil para consultas habituales.
+
+EDIFICIOS(nombreediﬁcio, supmediadesp) := EDIFICIOS_EMP(ediﬁcio, supmediadesp).
+R := EDIFICIOS × DESP ACHOS.
+
+Operaciones relacionales
+Selección
+• Con esta operación, se eligen algunas tuplas (ﬁlas) de la 
+relación y se eliminan las demás.
+• Es decir, a partir de una relación existente, se genera una 
+nueva formada por todas las ﬁlas que cumplen con una 
+condición especíﬁca.
+• La selección se deﬁne como T(C), donde T es el nombre de la 
+tabla y C sus condiciones.
+• Ejemplo DESPACHOS (superﬁcie > 10)
+• Se pueden utilizar operadores booleanos dentro de las 
+condiciones “y” ∧  / “o” ∨ 
+
+R := DESP ACHOS(ediﬁcio = Marina y superﬁcie > 12).
+
+Proyección
+• Con esta operación, se seleccionan algunos 
+atributos de la relación y se elimina el resto.
+• Se indica de la siguiente forma  T[A,B,C], 
+dónde T es el nombre de la tabla y A, B, C 
+son las columnas requeridas.
+
+R := EMPLEADOS_ADM[nombre, apellido]
+
+Combinación
+• A partir de dos relaciones, se genera una 
+nueva relación conformada por las tuplas que 
+resultan de concatenar tuplas de la primera 
+con la segunda, cumpliendo una condición 
+especiﬁcada.
+• Siendo dos tablas T, S que no tienen nombres 
+de atributos en común y siendo B la condición 
+de combinación, se representa de forma T[B]S.
+
+EDIFICIOS(nombreeedﬁcio,supmediadesp) := EDIFICIOS_EMP(ediﬁcio, supmediadesp),
+R := EDIFICIOS[nombreediﬁcio = ediﬁcio, supmediadesp ≤ superﬁcie] DESPACHOS.
+
+• Una combinación que solo tiene operador “=” se denomina equicombinación.
+• Cuando se tiene una equicombinación, se tendrán valores idénticos en dos 
+columnas.
+• Una combinación natural, se representa como T*S. Es una equicombinación 
+que elimina los atributos repetidos. Para que esto suceda, se tienen que tener 
+nombres en atributos comunes.
+R := EDIFICIOS_EMP * DESP ACHOS,
+
+Postgresql
+Unión: query1 UNION [ALL] query2 
+Intersección: query1 INTERSECT [ALL] query2 
+Diferencia: query1 EXCEPT [ALL] query2 
+Producto Cartesiano: SELECT * FROM table1 CROSS JOIN table2 
+Las tuplas duplicadas son eliminadas, a menos que se utilice la 
+palabra “ALL”:
+
+Selección, Proyección, Combinación
+SELECT (a, b, c) FROM table1 JOIN table2 ON table1.a = table2.d;
+
+Reto
+• Tarea 2. Ejercicios de Álgebra Relacional
+• Avance en reto: Modelo E-R

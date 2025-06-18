@@ -5,3 +5,5 @@ pydantic
 jinja2
 langgraph
 langchain
+pypdf
+chromadb

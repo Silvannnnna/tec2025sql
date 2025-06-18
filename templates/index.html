@@ -9,6 +9,12 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             padding: 20px;
             background: #f4f4f4;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: #181a1b;
+            color: #e0e0e0;
         }
 
         .chat {
@@ -19,21 +25,30 @@
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
             padding: 30px 30px 30px 30px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode .chat {
+            background: #23272a;
+            color: #e0e0e0;
         }
 
         .bubble {
             background: #e6f0ff;
             border-radius: 16px 16px 4px 16px;
-            padding: 18px 20px;
-            margin-bottom: 18px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-            font-size: 1.15em;
+            font-size: 1em;
             color: #222;
             max-width: 100%;
-            /* Quitar animación para evitar temblor en tablas */
             opacity: 1;
             transform: none;
-            /* animation: fadeInUp 0.5s forwards; */
+        }
+
+        body.dark-mode .bubble {
+            background: #2c3440;
+            color: #e0e0e0;
         }
 
         .bubble.user {
@@ -42,11 +57,8 @@
             align-self: flex-end;
         }
 
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: none;
-            }
+        body.dark-mode .bubble.user {
+            background: #1e4633;
         }
 
         .small {
@@ -55,46 +67,16 @@
             margin-top: 10px;
         }
 
-        .loader {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
+        body.dark-mode .small {
+            color: #b0b0b0;
         }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            margin: 0 4px;
+        .loader .dot {
             background: #4f8cff;
-            border-radius: 50%;
-            display: inline-block;
-            animation: bounce 1.2s infinite;
         }
 
-        .dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes bounce {
-            0%,
-            80%,
-            100% {
-                transform: scale(1);
-            }
-
-            40% {
-                transform: scale(1.5);
-            }
-        }
-
-        input,
-        button {
-            font-size: 1.1em;
+        body.dark-mode .loader .dot {
+            background: #7da6ff;
         }
 
         button {
@@ -112,21 +94,26 @@
             background: #2563eb;
         }
 
+        body.dark-mode button {
+            background: #2d4a7a;
+            color: #fff;
+        }
+
+        body.dark-mode button:hover {
+            background: #1a2e4a;
+        }
+
         #question {
             margin-bottom: 10px;
             border-radius: 8px;
             border: 1px solid #ccc;
         }
 
-        #chatLog {
-            display: flex;
-            flex-direction: column;
-            margin-top: 20px;
-            max-height: 65vh;
-            overflow-y: auto;
+        body.dark-mode #question {
+            background: #23272a;
+            color: #e0e0e0;
+            border: 1px solid #444;
         }
-
-        /* Scroll SOLO para tablas */
 
         .table-scroll {
             max-width: 100%;
@@ -135,6 +122,10 @@
             overflow-y: auto;
             margin: 0 auto 10px auto;
             background: #fff;
+        }
+
+        body.dark-mode .table-scroll {
+            background: #23272a;
         }
 
         table {
@@ -151,6 +142,13 @@
             font-size: 1em;
         }
 
+        body.dark-mode th,
+        body.dark-mode td {
+            border: 1px solid #444;
+            background: #23272a;
+            color: #e0e0e0;
+        }
+
         tr:nth-child(even) {
             background: #f7faff;
         }
@@ -158,11 +156,40 @@
         tr:nth-child(odd) {
             background: #fff;
         }
+
+        body.dark-mode tr:nth-child(even),
+        body.dark-mode tr:nth-child(odd) {
+            background: #23272a;
+        }
+
+        /* Botón dark mode */
+
+        .dark-toggle {
+            position: absolute;
+            top: 24px;
+            right: 40px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #4f8cff;
+            transition: color 0.2s;
+        }
+
+        body.dark-mode .dark-toggle {
+            color: #7da6ff;
+        }
     </style>
 </head>
 
 <body>
+    <button class="dark-toggle" id="darkToggle" title="Alternar modo oscuro/claro">🌙</button>
     <div class="chat">
+        <form id="pdfForm" style="margin-bottom:18px; display:flex; gap:10px; align-items:center;" enctype="multipart/form-data" onsubmit="uploadPDF(event)">
+            <input type="file" id="pdfInput" accept="application/pdf" style="flex:1;" />
+            <button type="submit">Subir PDF</button>
+            <span id="pdfStatus" style="font-size:0.95em;"></span>
+        </form>
         <h2 style="text-align:center; font-size:2em; margin-bottom: 20px;">🛍️ Asistente de Tienda IA</h2>
         <input id="question" placeholder="¿Qué productos se han vendido más?" style="width: 100%; padding: 12px;" />
         <button onclick="sendQuestion()">Preguntar</button>
@@ -173,6 +200,25 @@
     </div>
 
     <script>
+        // Dark mode toggle
+        const darkToggle = document.getElementById('darkToggle');
+
+        function setDarkMode(on) {
+            document.body.classList.toggle('dark-mode', on);
+            localStorage.setItem('darkMode', on ? '1' : '0');
+            darkToggle.textContent = on ? '☀️' : '🌙';
+        }
+
+        darkToggle.onclick = () => setDarkMode(!document.body.classList.contains('dark-mode'));
+
+        // Inicializar según preferencia previa o sistema
+        (function () {
+            const saved = localStorage.getItem('darkMode');
+            if (saved === '1' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setDarkMode(true);
+            }
+        })();
+
         function addMessage(content, isUser = false) {
             const div = document.createElement("div");
             div.className = "bubble" + (isUser ? " user" : "");
@@ -183,12 +229,61 @@
 
         function showLoader(show) {
             document.getElementById("loader").style.display = show ? "flex" : "none";
+            let dotsBubble = document.getElementById("dotsBubble");
+            if (show) {
+                if (!dotsBubble) {
+                    dotsBubble = document.createElement("div");
+                    dotsBubble.className = "bubble";
+                    dotsBubble.id = "dotsBubble";
+                    dotsBubble.innerHTML = '<span id="dotsAnim">Generando respuesta<span class="dots">...</span></span>';
+                    document.getElementById("chatLog").appendChild(dotsBubble);
+                    dotsBubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            } else {
+                if (dotsBubble) dotsBubble.remove();
+            }
+        }
+        // Animación de puntos suspensivos
+        setInterval(() => {
+            const dots = document.querySelector("#dotsAnim .dots");
+            if (dots) {
+                dots.textContent = ".".repeat(((dots.textContent.length) % 3) + 1);
+            }
+        }, 400);
+
+        // Inserta scroll solo en tablas y agrega botón de descarga CSV
+        function addTableScroll(html) {
+            // Busca la primera tabla y la envuelve en un div con clase table-scroll y un botón de descarga
+            return html.replace(/(<table[\s\S]*?<\/table>)/i, function(match) {
+                return `<div class="table-scroll">${match}<button class='csv-btn' onclick='downloadTableCSV(this)'>Descargar CSV</button></div>`;
+            });
         }
 
-        // Inserta scroll solo en tablas
-        function addTableScroll(html) {
-            // Busca la primera tabla y la envuelve en un div con clase table-scroll
-            return html.replace(/(<table[\s\S]*?<\/table>)/i, '<div class="table-scroll">$1</div>');
+        // Función para descargar la tabla como CSV
+        function downloadTableCSV(btn) {
+            const table = btn.parentElement.querySelector('table');
+            if (!table) return;
+            let csv = [];
+            for (let row of table.rows) {
+                let rowData = [];
+                for (let cell of row.cells) {
+                    let text = cell.innerText.replace(/\n/g, ' ').replace(/"/g, '""');
+                    rowData.push('"' + text + '"');
+                }
+                csv.push(rowData.join(','));
+            }
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resultados.csv';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
         }
 
         async function sendQuestion() {
@@ -226,6 +321,38 @@
         document.getElementById("question").addEventListener("keydown", function (e) {
             if (e.key === "Enter") sendQuestion();
         });
+
+        async function uploadPDF(e) {
+            e.preventDefault();
+            const input = document.getElementById('pdfInput');
+            const status = document.getElementById('pdfStatus');
+            if (!input.files.length) {
+                status.textContent = 'Selecciona un archivo PDF.';
+                return;
+            }
+            status.textContent = 'Subiendo...';
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+            // Subir PDF
+            const res = await fetch('/upload_pdf', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.error) {
+                status.textContent = 'Error: ' + data.error;
+                addMessage('<span style="color:red">Error al subir el PDF: ' + data.error + '</span>');
+                return;
+            }
+            status.textContent = 'Procesando...';
+            // Procesar PDF (vectorizar)
+            const res2 = await fetch('/process_pdf', { method: 'POST' });
+            const data2 = await res2.json();
+            if (data2.error) {
+                status.textContent = 'Error: ' + data2.error;
+                addMessage('<span style="color:red">Error al procesar el PDF: ' + data2.error + '</span>');
+            } else {
+                status.textContent = 'PDF listo para preguntas.';
+                addMessage('<b>✅ PDF cargado y listo para preguntas en el chat.</b>');
+            }
+        }
     </script>
 </body>
 
